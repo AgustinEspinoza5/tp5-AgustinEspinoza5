@@ -42,6 +42,7 @@
  *** DEFINES PRIVADOS AL MODULO
 *********************************************************************************************************/
 
+
 /*********************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
 *********************************************************************************************************/
@@ -51,8 +52,38 @@
 #define IS_SET_PIN(PORT,PIN) (((PORT>>PIN)&0x01)==1 ? 1 :0)
 
 // ejemplo si quiere usar una macro para cada botón
-#define Boton1 ((PINDC>>PC0)&0x01)
+#define Boton1 ((PINDC >> PC0) & 0x01)
+#define Boton2 ((PINDC >> PC1) & 0x01)
+#define Boton3 ((PINDC >> PC2) & 0x01)
+#define Boton4 ((PINDC >> PC3) & 0x01)
 
+volatile uint8_t tecla1;
+volatile uint8_t tecla2;
+volatile uint8_t tecla3;
+volatile uint8_t tecla4;
+
+volatile uint8_t boton1;
+volatile uint8_t boton2;
+volatile uint8_t boton3;
+volatile uint8_t boton4;
+
+volatile uint8_t Antecla1 = 0;
+volatile uint8_t Antecla2;
+volatile uint8_t Antecla3;
+volatile uint8_t Antecla4;
+
+volatile long int i = 0;
+
+volatile uint32_t vel = 50000;
+
+enum play_t
+{
+  PAUSA = 0,
+  PLAY
+};
+play_t pausa = PAUSA;
+play_t play = PLAY;
+volatile uint8_t cont = 0;
 /*********************************************************************************************************
  *** TIPOS DE DATOS PRIVADOS AL MODULO
 *********************************************************************************************************/
@@ -60,7 +91,91 @@
 /*********************************************************************************************************
  *** TABLAS PRIVADAS AL MODULO
 *********************************************************************************************************/
+void init(void)
+{
+  DDRD |= 1 << PD2;
+  DDRD |= 1 << PD3;
+  DDRD |= 1 << PD4;
+  DDRD |= 1 << PD5;
+  DDRD |= 1 << PD6;
+  DDRD |= 1 << PD7;
 
+  DDRB |= 1 << PB0;
+  DDRB |= 1 << PB1;
+
+  PORTC &= ~(1 << PC0);
+  PORTC &= ~(1 << PC1);
+  PORTC &= ~(1 << PC2);
+  PORTC &= ~(1 << PC3);
+}
+void Mostrar_LED(void)
+{
+  switch (cont)
+  {
+  case 1:
+    PORTD |= (1 << PD2);
+    break;
+  case 2:
+    PORTD |= (1 << PD3);
+    PORTD &= ~(1 << PD2);
+    break;
+  case 3:
+    PORTD |= (1 << PD4);
+    PORTD &= ~(1 << PD3);
+    break;
+  case 4:
+    PORTD |= (1 << PD5);
+    PORTD &= ~(1 << PD4);
+    break;
+  case 5:
+    PORTD |= (1 << PD6);
+    PORTD &= ~(1 << PD5);
+    break;
+  case 6:
+    PORTD |= (1 << PD7);
+    PORTD &= ~(1 << PD6);
+    break;
+  case 7:
+    PORTB |= (1 << PB0);
+    PORTD &= ~(1 << PD7);
+    break;
+  case 8:
+    PORTB |= (1 << PB1);
+    PORTB &= ~(1 << PB0);
+    break;
+  case 9:
+    PORTB |= (1 << PB0);
+    PORTB &= ~(1 << PB1);
+    break;
+  case 10:
+    PORTD |= (1 << PD7);
+    PORTB &= ~(1 << PB0);
+    break;
+  case 11:
+    PORTD |= (1 << PD6);
+    PORTD &= ~(1 << PD7);
+    break;
+  case 12:
+    PORTD |= (1 << PD5);
+    PORTD &= ~(1 << PD6);
+    break;
+  case 13:
+    PORTD |= (1 << PD4);
+    PORTD &= ~(1 << PD5);
+    break;
+  case 14:
+    PORTD |= (1 << PD3);
+    PORTD &= ~(1 << PD4);
+    break;
+  case 15:
+    PORTD |= (1 << PD2);
+    PORTD &= ~(1 << PD3);
+    break;
+  case 16:
+    PORTD &= ~(1 << PD2);
+    break;
+  }
+}
 /*********************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  *   se escriben en CamelCase y están precedidas por la identificación del 
