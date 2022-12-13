@@ -96,7 +96,7 @@ volatile uint8_t boton2;
 volatile uint8_t boton3;
 volatile uint8_t boton4;
 
-volatile uint8_t Antecla1 = 0;
+volatile uint8_t Antecla1;
 volatile uint8_t Antecla2;
 volatile uint8_t Antecla3;
 volatile uint8_t Antecla4;
@@ -184,16 +184,16 @@ void Antecla_1(void)
     _delay_ms(20);
     if (Boton1 == 0)
     {
-      tecla1 = 1;
+      tecla1 = 0;
     }
     else
     {
-      tecla1 = 0;
+      tecla1 = 1;
     }
   }
   else
   {
-    tecla1 = 0;
+    tecla1 = 1;
   }
 }
 void Antecla_2(void)
@@ -274,24 +274,12 @@ void Detector_de_Flanco1(void)
   }
 }
 
-void Detector_de_Flanco2(void)
-{
-  if (tecla2 == 1 && Antecla2 == 0)
-  {
-    Antecla2 = !Antecla2;
-  }
-  if (tecla2 == 0 && Antecla2 == 1)
-  {
-    Antecla2 = !Antecla2;
-  }
-}
-
 void Detector_de_Flanco3(void)
 {
   if (tecla3 == 1 && Antecla3 == 0)
   {
     Antecla3 = !Antecla3;
-    if (Antecla2 == 1)
+    if (Antecla3 == 1)
     {
       tiempo = tiempo +20;
     }
@@ -306,7 +294,7 @@ void Detector_de_Flanco4(void)
   if (tecla4 == 1 && Antecla4 == 0)
   {
     Antecla4 = !Antecla4;
-    if (Antecla2 == 1)
+    if (Antecla4 == 1)
     {
       tiempo = tiempo -20;
     }
@@ -467,10 +455,9 @@ int main(void)
     Antecla_3();
     Antecla_4();
     Detector_de_Flanco1();
-    Detector_de_Flanco2();
     Detector_de_Flanco3();
     Detector_de_Flanco4();
-
+    
     Mostrar_LED();
   }
 
